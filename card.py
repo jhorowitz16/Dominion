@@ -2,7 +2,13 @@
 
 # card class for a dominion card
 
-Class Card
+
+class Card:
+
+        # Card IDs - one unique id for type of card
+        ids = { 'COPPER_ID': 0, 'SILVER_ID' : 1, 'GOLD_ID' : 2,
+                'ESTATE_ID' : 3, 'DUCHY_ID' : 4, 'PROVINCE_ID' : 5
+        }
 
 	name = ""
 	cost = 0
@@ -28,9 +34,9 @@ Class Card
                 pass
 
 	def __repr__(self):
-		return name + "_" + str(card_id)
+		return self.name + "_" + str(self.card_id)
 
         def __str__(self):
-            return name + "_" + str(card_id)
+            return self.name + "_" + str(self.card_id)
 
 
