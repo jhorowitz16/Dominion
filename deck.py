@@ -19,6 +19,9 @@ class Deck:
         # this is the full deck - two smaller lists representing the discard and the other list
 
 	cards = []
+        pile = [] # this is the "deck" in the traditional sense of the cards yet to play...
+        discard = []
+        hand = []
 
 	money_types = ['copper', 'silver', 'gold']
 	victory_types = ['estate', 'duchy', 'province']
@@ -89,10 +92,34 @@ class Deck:
 
         ###### shuffling ######
 
-        # randomize the order of the deck 
-        def shuffleDeck(self):
-                shuffle(self.cards)
-                return
+        # do NOT shuffle the deck - instead shuffle the pile - let the deck be a clean copy of all cards owned
+
+        def reshuffle(self):
+                shuffle(self.discard)
+                self.cards += self.discard
+                self.discard = []
+
+
+
+        ###### game actions ######
+
+        # draw hand default is 5 cards, without expansions....
+        def drawHand(self):
+                left_to_deal = 5
+                while left_to_deal > 0:
+                        if len(self.pile) > 0:
+                                self.hand.append(self.pile.pop())
+                                left_to_deal -= 1 
+                        else:
+                                # need to reshuffle
+                                self.reshuffle()
+
+        # end of turn, discard hand (and all played cards)
+        def handToDiscard(self):
+                discard += hand
+                hand = []
+
+
 
         ###### string related utils ######
 
@@ -101,3 +128,8 @@ class Deck:
 
         def __str__(self):
                 return str(self.cards)
+
+        def fullPrint(self):
+                print("Hand: " + self.hand)
+                print("Discard: " + self.discard)
+                print("All Cards: " + self.cards)
