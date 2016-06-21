@@ -1,9 +1,10 @@
 from random import *
+from card import Card
 
 # Deck.py
-
 # deck class for dominion
 
+DEBUG = False 
 
 class Deck:
 
@@ -32,11 +33,13 @@ class Deck:
 		self.deck_id = deck_id 
 		self.player = player
 		self.name = name
+                if cards:
+                        self.cards = cards
+                else:
+                        self.setupDeck() # 7 coppers, 3 estates
 		self.total_vp = self.calcTotalVPs()
 		self.total_worth = self.calcTotalWorth()
-                self.av_worth = self.total_worth / len(cards)
-                self.cards = cards
-
+                self.av_worth = self.total_worth / len(self.cards)
 
         ###### add and remove cards ######
 
@@ -64,7 +67,6 @@ class Deck:
                 pass
 
 
-
         ###### helper methods for simple calculations ###### 
 
         # calculate the total 'worth' of the deck based on the initial list of cards passed into the constructor 
@@ -87,7 +89,14 @@ class Deck:
                 for card in self.cards:
                         total += card.money
                 return total
-
+        
+        # how much plyaer can buy (include action cards that directly provide money cards)
+        # this should be called after all action cards are played - b/c player can gain extra cards
+        def calcHandMoney(self):
+                total = 0
+                for card in self.hand:
+                        total += card.money
+                return total
 
 
         ###### shuffling ######
@@ -95,7 +104,10 @@ class Deck:
         # do NOT shuffle the deck - instead shuffle the pile - let the deck be a clean copy of all cards owned
 
         def reshuffle(self):
-                shuffle(self.discard)
+                dp("reshuffle")
+                if self.discard:
+                        dp("actually shuffling")
+                        shuffle(self.discard)
                 self.cards += self.discard
                 self.discard = []
 
@@ -103,10 +115,31 @@ class Deck:
 
         ###### game actions ######
 
+        # prep the initial deck of 7 coppers and 3 estates
+        def setupDeck(self):
+                for i in range(7):
+                        copper = Card("copper", 0, i, Card.ids['COPPER_ID'])
+                        self.pile.append(copper)
+                        self.cards.append(copper)
+                for j in range(3):
+                        estate = Card("estate", 2, j, Card.ids['ESTATE_ID'])
+                        self.pile.append(estate)
+                        self.cards.append(estate)
+
+        # discard the hand including played cards
+        def cleanUp(self):
+                self.discard += self.hand
+                self.hand = []
+
+
         # draw hand default is 5 cards, without expansions....
         def drawHand(self):
+                if not self.pile:
+                        # no pile... problem...
+                        return
                 left_to_deal = 5
                 while left_to_deal > 0:
+                        dp(self.pile)
                         if len(self.pile) > 0:
                                 self.hand.append(self.pile.pop())
                                 left_to_deal -= 1 
@@ -130,6 +163,12 @@ class Deck:
                 return str(self.cards)
 
         def fullPrint(self):
-                print("Hand: " + self.hand)
-                print("Discard: " + self.discard)
-                print("All Cards: " + self.cards)
+                dp("Hand: " + self.hand)
+                dp("Discard: " + self.discard)
+                dp("All Cards: " + self.cards)
+        
+
+# debug print - same as print iff debug is true
+def dp(print_str):
+        if DEBUG:
+                print(print_str)
