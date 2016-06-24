@@ -7,27 +7,34 @@ DEBUG = True
 
 class Game:
 
-        turn = 0
-
         def __init__(self):
                 # initialize the starting deck here instead
                 self.deck = Deck()
+                self.turn = 0
+                self.deck.fullPrint(self.turn)
 
         # note the constructor already initialized the deck, plus it is already shuffled 
         def setup(self):
                 pass
+        
+
         # ABC
         # Action
         # Buy
         # Collect
         def takeTurn(self):
+                return_info = {} # for playing around with events - to get feedback in main
+
                 self.turn += 1
-                dp("===================\nturn #" + str(self.turn))
                 self.deck.drawHand()
-                dp("hand: " + str(self.deck.hand))
-                dp("pile: " + str(self.deck.pile))
+                self.deck.fullPrint(self.turn) # hand right after drawing it
+                return_info['money'] = self.deck.calcHandMoney()
+                return_info['turn'] = self.turn
                 self.moneyBuy() 
+
                 self.deck.cleanUp()
+
+                return return_info 
 
 
         # choose what to buy...
@@ -39,10 +46,10 @@ class Game:
                         return
                 elif money < 6:
                         dp("silver")
-                        self.deck.addCardType('silver')
+                        self.deck.addCardType('SILVER')
                 else:
                         dp("gold")
-                        self.deck.addCardType('gold')
+                        self.deck.addCardType('GOLD')
 
 # debug print - same as print iff debug is true
 def dp(print_str):

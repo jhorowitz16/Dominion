@@ -4,64 +4,60 @@ from card import Card
 # Deck.py
 # deck class for dominion
 
-DEBUG = False 
+DEBUG = False
+# DEBUG = True
 
 class Deck:
 
-	deck_id = 0
-	player = "player1"
-	name = "the deck"
-	total_vp = 0
-        total_worth = 0
-	av_worth = 0
-        count = 0
-
         # represent the cards in a deck as a list of Card objects
 
-        # this is the full deck - two smaller lists representing the discard and the other list
+        # there is no full deck object - all cards are saved in pile, discard or hand
 
 	# cards = []
-        pile = [] # this is the "deck" in the traditional sense of the cards yet to play...
-        discard = []
-        hand = []
+        # pile is the "deck" in the traditional sense of the cards yet to play...
 
-	money_types = ['copper', 'silver', 'gold']
-	victory_types = ['estate', 'duchy', 'province']
-	action_types = ['village', 'smithy']
+	money_types = ['COPPER', 'SILVER', 'GOLD']
+	victory_types = ['ESTATE', 'DUCHY', 'PROVINCE']
+        action_types = ['VILLAGE', 'SMITHY']
 	all_types = money_types + victory_types + action_types
 
-	def __init__(self, deck_id=0, player="player", name="deck", cards=[]):
+	def __init__(self, deck_id=0, player="player", name="deck"):
+                print("INIT")
 		self.deck_id = deck_id 
 		self.player = player
 		self.name = name
-                if cards:
-                        self.cards = cards
-                else:
-                        self.setupDeck() # 7 coppers, 3 estates
+
+                self.hand = []
+                self.discard = []
+                self.pile = [] 
+                print("USING SETUP DECK")
+                self.setupDeck() # 7 coppers, 3 estates
+                        
 		self.total_vp = self.calcTotalVPs()
 		self.total_worth = self.calcTotalWorth()
-                self.av_worth = self.total_worth / len(self.cards)
+                self.av_worth = self.total_worth / len(self.pile)
+                self.count = 0
 
         ###### add and remove cards ######
 
 	# two versions of add card - one that takes a type (string) and one that takes an actual card object
 	def addCard(self, card):
 		if card:
-			self.cards += [card]
                         self.discard += [card]
 			self.count += 1
 			self.av_worth += (self.av_worth*self.count + card.worth) / self.count
 			self.total_vp += card.vp
 		else:
+                        dp("card not found")
 			return False
 
 	def addCardType(self, type_str):
 		if type_str in Deck.all_types:
 			# make a card and add it
-			new_card = Card(type_str)
+			new_card = Card(type_str, self.count)
 			self.addCard(new_card)
-
 		else:
+                        dp("card type not found")
 			return False
 
 	# remove a card based on its unique id
@@ -74,21 +70,21 @@ class Deck:
         # calculate the total 'worth' of the deck based on the initial list of cards passed into the constructor 
         def calcTotalWorth(self):
                 total = 0
-                for card in self.cards:
+                for card in self.pile:
                         total += card.worth
                 return total
 
         # count all the victory points in the initial list of cards
         def calcTotalVPs(self):
                 total = 0
-                for card in self.cards:
+                for card in self.pile:
                         total += card.worth
                 return total
        
         # not sure if this will be useful...
         def calcTotalMoney(self):
                 total = 0
-                for card in self.cards:
+                for card in self.pile:
                         total += card.money
                 return total
         
@@ -96,24 +92,20 @@ class Deck:
         # this should be called after all action cards are played - b/c player can gain extra cards
         def calcHandMoney(self):
                 total = 0
-                print(self.hand)
                 for card in self.hand:
-                        print(card)
-                        print(">>>>" + str(card.money))
                         total += card.money
                 return total
 
 
         ###### shuffling ######
 
-        # do NOT shuffle the deck - instead shuffle the pile - let the deck be a clean copy of all cards owned
-
+        # actually shuffle the pile... no more deck
         def reshuffle(self):
                 dp("reshuffle")
-                if self.discard:
+                if len(self.discard) > 1:
                         dp("actually shuffling")
                         shuffle(self.discard)
-                self.cards += self.discard
+                self.pile += self.discard
                 self.discard = []
 
 
@@ -124,15 +116,13 @@ class Deck:
         # shuffle the pile
         def setupDeck(self):
                 for i in range(7):
-                        copper = Card("copper", 0, i, Card.ids['COPPER_ID'])
+                        copper = Card("COPPER", i)
                         self.pile.append(copper)
-                        self.cards.append(copper)
-                for j in range(3):
-                        estate = Card("estate", 2, j, Card.ids['ESTATE_ID'])
+                for j in range(7, 10):
+                        estate = Card("ESTATE", j)
                         self.pile.append(estate)
-                        self.cards.append(estate)
                 self.count = 10
-                # shuffle(self.pile)
+                shuffle(self.pile)
 
         # discard the hand including played cards
         def cleanUp(self):
@@ -143,8 +133,8 @@ class Deck:
         # draw hand default is 5 cards, without expansions....
         def drawHand(self):
                 if not self.pile:
-                        # no pile... problem...
-                        return
+                        # no pile... problem... need to shuffle
+                        self.reshuffle()
                 left_to_deal = 5
                 while left_to_deal > 0:
                         dp(self.pile)
@@ -168,13 +158,16 @@ class Deck:
                 return self.name + '_' + str(self.deck_id)
 
         def __str__(self):
-                return str(self.cards)
+                return str(self.pile)
 
-        def fullPrint(self):
-                dp("Hand: " + self.hand)
-                dp("Discard: " + self.discard)
-                dp("All Cards: " + self.cards)
-        
+        def fullPrint(self, turn=-1):
+                if turn > -1:
+                        print("\n\n=================== turn " + str(turn) + " ====================")
+                else:
+                        print("\n\n===============================================")
+                print("Hand: " + str(self.hand))
+                print("Pile: " + str(self.pile))
+                print("Discard: " + str(self.discard))
 
 # debug print - same as print iff debug is true
 def dp(print_str):
