@@ -77,8 +77,10 @@ class Deck:
         # count all the victory points in the initial list of cards
         def calcTotalVPs(self):
                 total = 0
-                for card in self.pile:
+                everything = self.pile + self.discard + self.hand
+                for card in everything:
                         total += card.worth
+                
                 return total
        
         # not sure if this will be useful...

@@ -30,7 +30,8 @@ class Game:
                 self.deck.fullPrint(self.turn) # hand right after drawing it
                 return_info['money'] = self.deck.calcHandMoney()
                 return_info['turn'] = self.turn
-                self.moneyBuy() 
+                return_info['vp'] = self.deck.total_vp
+                self.moneyBuy(True) 
 
                 self.deck.cleanUp()
 
@@ -38,11 +39,14 @@ class Game:
 
 
         # choose what to buy...
-        # for now, return a card object (or a string if not buying anything)
-        def moneyBuy(self):
+        # if provinces is set to true, buy provinces in addition to silvers and golds
+        def moneyBuy(self, provinces=False):
                 money = self.deck.calcHandMoney()
                 dp("money: " + str(money))
-                if money < 3:
+                if money >= 8 and provinces:
+                        dp("province")
+                        self.deck.addCardType('PROVINCE')
+                elif money < 3:
                         return
                 elif money < 6:
                         dp("silver")
@@ -50,6 +54,7 @@ class Game:
                 else:
                         dp("gold")
                         self.deck.addCardType('GOLD')
+
 
 # debug print - same as print iff debug is true
 def dp(print_str):
