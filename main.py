@@ -7,10 +7,8 @@ from game import Game
 
 my_deck = Deck()
 
-game = Game(my_deck)
-game.takeTurn()
-game.takeTurn()
-game.takeTurn()
+game = Game()
+game.setup()
 game.takeTurn()
 game.takeTurn()
 game.takeTurn()

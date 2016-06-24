@@ -14,12 +14,13 @@ class Deck:
 	total_vp = 0
         total_worth = 0
 	av_worth = 0
+        count = 0
 
         # represent the cards in a deck as a list of Card objects
 
         # this is the full deck - two smaller lists representing the discard and the other list
 
-	cards = []
+	# cards = []
         pile = [] # this is the "deck" in the traditional sense of the cards yet to play...
         discard = []
         hand = []
@@ -46,21 +47,22 @@ class Deck:
 	# two versions of add card - one that takes a type (string) and one that takes an actual card object
 	def addCard(self, card):
 		if card:
-			cards += card
-			count += 1
-			av_worth += (av_worth*count + card.worth) / count
-			total_vp += card.vp
+			self.cards += [card]
+                        self.discard += [card]
+			self.count += 1
+			self.av_worth += (self.av_worth*self.count + card.worth) / self.count
+			self.total_vp += card.vp
 		else:
-			return false
+			return False
 
 	def addCardType(self, type_str):
-		if type_str in all_types:
+		if type_str in Deck.all_types:
 			# make a card and add it
 			new_card = Card(type_str)
-			addCard(self, new_card)
+			self.addCard(new_card)
 
 		else:
-			return false
+			return False
 
 	# remove a card based on its unique id
 	def removeCard(self, id):
@@ -94,7 +96,10 @@ class Deck:
         # this should be called after all action cards are played - b/c player can gain extra cards
         def calcHandMoney(self):
                 total = 0
+                print(self.hand)
                 for card in self.hand:
+                        print(card)
+                        print(">>>>" + str(card.money))
                         total += card.money
                 return total
 
@@ -116,6 +121,7 @@ class Deck:
         ###### game actions ######
 
         # prep the initial deck of 7 coppers and 3 estates
+        # shuffle the pile
         def setupDeck(self):
                 for i in range(7):
                         copper = Card("copper", 0, i, Card.ids['COPPER_ID'])
@@ -125,6 +131,8 @@ class Deck:
                         estate = Card("estate", 2, j, Card.ids['ESTATE_ID'])
                         self.pile.append(estate)
                         self.cards.append(estate)
+                self.count = 10
+                # shuffle(self.pile)
 
         # discard the hand including played cards
         def cleanUp(self):

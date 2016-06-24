@@ -1,4 +1,5 @@
-
+from card import Card
+from deck import Deck
 
 # Simulate an actual game (for a single person)
 
@@ -6,19 +7,15 @@ DEBUG = True
 
 class Game:
 
-        deck = None 
         turn = 0
 
-        def __init__(self, deck):
-                self.deck = deck
+        def __init__(self):
+                # initialize the starting deck here instead
+                self.deck = Deck()
 
-
+        # note the constructor already initialized the deck, plus it is already shuffled 
         def setup(self):
-                # put the starting setup here ... AND ADD EVERYONE TO PILE
                 pass
-                for card in deck:
-                        self.deck.pile += card
-
         # ABC
         # Action
         # Buy
@@ -29,11 +26,23 @@ class Game:
                 self.deck.drawHand()
                 dp("hand: " + str(self.deck.hand))
                 dp("pile: " + str(self.deck.pile))
-                money = self.deck.calcHandMoney()
-                dp("money: " + str(money))
-                
+                self.moneyBuy() 
                 self.deck.cleanUp()
 
+
+        # choose what to buy...
+        # for now, return a card object (or a string if not buying anything)
+        def moneyBuy(self):
+                money = self.deck.calcHandMoney()
+                dp("money: " + str(money))
+                if money < 3:
+                        return
+                elif money < 6:
+                        dp("silver")
+                        self.deck.addCardType('silver')
+                else:
+                        dp("gold")
+                        self.deck.addCardType('gold')
 
 # debug print - same as print iff debug is true
 def dp(print_str):
