@@ -67,6 +67,17 @@ class Card:
         def cardToCost(self):
                 return Card.costs[self.name] 
 
+
+        ##### action card methods here #####
+
+        # draw 2 cards, gain 1 action
+        def laboratory(deck):
+                deck.drawCards(2) 
+                # *** also gain an action... but deal with actions later... *** 
+
+
+
+
 	def __repr__(self):
                 return str(self)
 

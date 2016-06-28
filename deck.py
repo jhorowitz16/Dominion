@@ -132,12 +132,13 @@ class Deck:
                 self.hand = []
 
 
-        # draw hand default is 5 cards, without expansions....
-        def drawHand(self):
+        # draw an integer number of cards (5 for hand)
+        # give number of cards as a parameter
+        def drawCards(self, numCards):
                 if not self.pile:
                         # no pile... problem... need to shuffle
                         self.reshuffle()
-                left_to_deal = 5
+                left_to_deal = numCards 
                 while left_to_deal > 0:
                         dp(self.pile)
                         if len(self.pile) > 0:
@@ -146,6 +147,10 @@ class Deck:
                         else:
                                 # need to reshuffle
                                 self.reshuffle()
+
+        # draw hand default is 5 cards, without expansions....
+        def drawHand(self):
+                self.drawCards(5)
 
         # end of turn, discard hand (and all played cards)
         def handToDiscard(self):

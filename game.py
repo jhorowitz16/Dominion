@@ -32,6 +32,7 @@ class Game:
                 return_info['turn'] = self.turn
                 return_info['vp'] = self.deck.total_vp
                 self.moneyBuy(True) 
+                # self.buy(self.moneyBuy, True)
 
                 self.deck.cleanUp()
 
@@ -54,6 +55,24 @@ class Game:
                 else:
                         dp("gold")
                         self.deck.addCardType('GOLD')
+
+
+        # the simple playing strat - play everything possible - random order
+        # *** tbd strat - take into account: being able to play everything, more valuable actions (expensive first?)
+        def simpleActions(self):
+                for card in self.deck.hand:
+                        if card in self.deck.action_types:
+                                # it's an action card
+                                card.play() # add a play action for each card later - *** - dictionary maps card names to the methods themselves...
+
+
+        # play takes a strategy function for how to play action cards (basically everything other than the buying
+        def play(self, strat):
+                pass
+
+        # buy does the buying, also taking a strategy function for the best card(s) to buy
+        def buy(self, strat, *args):
+                strat(args)
 
 
 # debug print - same as print iff debug is true
