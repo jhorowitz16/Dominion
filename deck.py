@@ -18,11 +18,11 @@ class Deck:
 
 	money_types = ['COPPER', 'SILVER', 'GOLD']
 	victory_types = ['ESTATE', 'DUCHY', 'PROVINCE']
-        action_types = ['VILLAGE', 'SMITHY']
+        action_types = ['VILLAGE', 'SMITHY', 'LABORATORY']
 	all_types = money_types + victory_types + action_types
 
 	def __init__(self, deck_id=0, player="player", name="deck"):
-                print("INIT")
+                dp("INIT")
 		self.deck_id = deck_id 
 		self.player = player
 		self.name = name
@@ -30,7 +30,7 @@ class Deck:
                 self.hand = []
                 self.discard = []
                 self.pile = [] 
-                print("USING SETUP DECK")
+                dp("USING SETUP DECK")
                 self.setupDeck() # 7 coppers, 3 estates
                         
 		self.total_vp = self.calcTotalVPs()

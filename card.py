@@ -28,6 +28,8 @@ class Card:
                 self.money = self.cardToMoney() # copper 1, silver 2, gold 3 - ... tho market 1, etc.
                 self.worth = self.cardToWorth() # for AI...
                 self.vp = self.cardToVP() # end game scoring
+                print("I am worth : " + str(self.money))
+
 
 	# actions can do stuff...
 	def action():
@@ -39,7 +41,9 @@ class Card:
 
         # for now, everything has no money value other than the coins, which are one under their value
         def cardToMoney(self):
+                print(str(self.name) + " is a " + str(self.type_id) + " rather than " + str(Card.ids['COPPER']))
                 if self.type_id == Card.ids['COPPER']:
+                        print("card to money")
                         return 1
                 elif self.type_id == Card.ids['SILVER']:
                         return 2 
@@ -69,11 +73,15 @@ class Card:
 
 
         ##### action card methods here #####
+        # Note: every action card must take and return an "effects" dictionary
+        # effects dictionary has actions and buys (for now)
 
         # draw 2 cards, gain 1 action
-        def laboratory(deck):
+        def laboratory(deck, stats):
                 deck.drawCards(2) 
-                # *** also gain an action... but deal with actions later... *** 
+                stats['actions'] += 1 # gain an action
+                return stats 
+
 
 
 

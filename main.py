@@ -63,4 +63,18 @@ def turnsUntilPoints(num_points):
         print(num_turns)
         print("average: " + str(sum(num_turns)/len(num_turns)))
 
-turnsUntilPoints(21)
+# turnsUntilPoints(21)
+
+def playGame():
+        game = Game()
+        game.setup()
+        game_over = False
+        while (not game_over):
+                input_string = raw_input("press c to continue, q to quit: ")
+                print('test')
+                
+                if input_string[0] == 'q':
+                        game_over = True
+                turn_results = game.takeTurn()
+
+playGame()
