@@ -6,7 +6,7 @@ from game import Game
 # for generic testing 
 
 
-
+DEBUG = True 
 
 
 def turnsUntilEvent():
@@ -24,20 +24,19 @@ def turnsUntilEvent():
                 money = turn_results['money'] 
                 turn = turn_results['turn'] 
                 money_dist.append(money)
-                print('again')
-            print("money distribution: " + str(money_dist))
-            print('done')
+                dp('again')
+            dp("money distribution: " + str(money_dist))
+            dp('done')
             num_turns.append(turn)
 
-      print(num_turns)
-      print("average: " + str(sum(num_turns)/len(num_turns)))
+      dp(num_turns)
+      dp("average: " + str(sum(num_turns)/len(num_turns)))
 
 
       # with 2000 trials, to get a hand of 5 golds - it takes 46 turns 
       # 11 turns for first province
 
 # turnsUntilEvent()
-
 
 
 def turnsUntilPoints(num_points):
@@ -55,26 +54,32 @@ def turnsUntilPoints(num_points):
                 turn = turn_results['turn'] 
                 vp = turn_results['vp'] 
                 vp_dist.append(vp)
-                print('again')
-            print("victory point distribution: " + str(vp_dist))
-            print('done')
+            dp("victory point distribution: " + str(vp_dist))
             num_turns.append(turn)
 
-      print(num_turns)
-      print("average: " + str(sum(num_turns)/len(num_turns)))
+      dp(num_turns)
+      dp("average: " + str(sum(num_turns)/len(num_turns)))
 
-# turnsUntilPoints(21)
 
 def playGame():
       game = Game()
       game.setup()
       game_over = False
       while (not game_over):
-            input_string = raw_input("press c to continue, q to quit: ")
-            print('test')
+            input_string = raw_input("\npress c to continue, q to quit: ")
             
             if input_string[0] == 'q':
-                game_over = True
+                game_over = True # later will implement actual game over conditions - based on piles
+                break
             turn_results = game.takeTurn()
 
-playGame()
+
+# debug print - same as print iff debug is true
+def dp(print_str):
+    if DEBUG:
+        print(print_str)
+
+
+
+turnsUntilPoints(27)
+# playGame()

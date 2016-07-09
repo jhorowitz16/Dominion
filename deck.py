@@ -14,10 +14,6 @@ class Deck:
     # cards = []
     # pile is the "deck" in the traditional sense of the cards yet to play...
 
-    money_types = ['COPPER', 'SILVER', 'GOLD']
-    victory_types = ['ESTATE', 'DUCHY', 'PROVINCE']
-    action_types = ['VILLAGE', 'SMITHY', 'LABORATORY']
-    all_types = money_types + victory_types + action_types
 
     def __init__(self, deck_id=0, player="player", name="deck"):
         dp("INIT")
@@ -50,7 +46,7 @@ class Deck:
             return False
 
     def addCardType(self, type_str):
-        if type_str in Deck.all_types:
+        if type_str in Card.all_types:
             # make a card and add it
             new_card = Card(type_str, self.count)
             self.addCard(new_card)
@@ -167,12 +163,12 @@ class Deck:
 
     def fullPrint(self, turn=-1):
         if turn > -1:
-            print("\n\n=================== turn " + str(turn) + " ====================")
+            dp("\n\n=================== turn " + str(turn) + " ====================")
         else:
-            print("\n\n===============================================")
-        print("Hand: " + str(self.hand))
-        print("Pile: " + str(self.pile))
-        print("Discard: " + str(self.discard))
+            dp("\n\n===============================================")
+        dp("Hand: " + str(self.hand))
+        dp("Pile: " + str(self.pile))
+        dp("Discard: " + str(self.discard))
 
 # debug print - same as print iff debug is true
 def dp(print_str):

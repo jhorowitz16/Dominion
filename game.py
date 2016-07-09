@@ -3,15 +3,49 @@ from deck import Deck
 
 # Simulate an actual game (for a single person)
 
-DEBUG = True 
+DEBUG = False 
+ASSERTS = False
 
 class Game:
 
-    def __init__(self):
+    # default switches is only mid game
+    def __init__(self, switches=(0, 100)):
         # initialize the starting deck here instead
         self.deck = Deck()
         self.turn = 0
         self.deck.fullPrint(self.turn)
+
+
+        self.earlyBuy = priorityBuy(Card.money_types + ['LABORATORY']) 
+        self.midBuy = priorityBuy(Card.money_types + ['LABORATORY'] + ['PROVINCE']) 
+        self.lateBuy = priorityBuy(Card.victory_types)
+
+        self.switches = switches
+
+        # self.earlyBuy = priorityBuy(Card.money_types) 
+        # self.midBuy = priorityBuy(Card.money_types + ['PROVINCE']) 
+        # self.lateBuy = self.midBuy
+        
+
+        if ASSERTS:
+            assert self.midBuy(1) == ''
+            assert self.earlyBuy(3) == 'SILVER'
+            assert self.earlyBuy(5) == 'LABORATORY'
+            assert self.earlyBuy(6) == 'GOLD'
+            assert self.earlyBuy(8) == 'GOLD'
+            
+            assert self.midBuy(1) == ''
+            assert self.midBuy(3) == 'SILVER'
+            assert self.midBuy(5) == 'LABORATORY'
+            assert self.midBuy(6) == 'GOLD'
+            assert self.midBuy(8) == 'PROVINCE'
+
+            assert self.lateBuy(1) == ''
+            assert self.lateBuy(3) == 'ESTATE'
+            # assert self.lateBuy(5) == 'DUCHYzz' # test to fail
+            assert self.lateBuy(6) == 'DUCHY'
+            assert self.lateBuy(8) == 'PROVINCE'
+            
 
     # note the constructor already initialized the deck, plus it is already shuffled 
     def setup(self):
@@ -33,11 +67,34 @@ class Game:
         return_info['vp'] = self.deck.total_vp
 
         stats = self.simpleCalcPlay()
-        print(stats)
-        self.moneyBuy(stats['money'], True)
+        dp(stats)
+        # self.moneyBuy(stats['money'], True)
+        self.phaseBuys(stats['money']) # before turn 8, early game, before turn 10, mid game
         self.deck.cleanUp()
 
         return return_info 
+
+    
+    # smart buy - switches is a tuple signaling when to switch strategies
+    # ex - (5, 10) - before turn 5 early game, before turn 10 mid game, then late game (all VPs)
+    # goal - find the optimal constants
+    def phaseBuys(self, money):
+        # init idea
+        # early game - no vps no matter what
+        # mid game - best buy, including provinces
+        # late game - all points
+
+        if self.turn < self.switches[0]:
+            dp("early")
+            newCard = self.earlyBuy(money)
+        elif self.turn < self.switches[1]:
+            dp("mid")
+            newCard = self.midBuy(money)
+        else:
+            dp("late")
+            newCard = self.lateBuy(money)
+        dp("New Card: " + newCard) # *** multiple buys later 
+        self.deck.addCardType(newCard)
 
 
 
@@ -59,6 +116,7 @@ class Game:
             dp("gold")
             self.deck.addCardType('GOLD')
 
+
     # Calculate and play the entire hand
     # the simple playing code - play everything possible - random order
     # *** tbd strat - take into account: being able to play everything, more valuable actions (expensive first?)
@@ -68,14 +126,14 @@ class Game:
         stats = {'actions': 1, 'buys': 1, 'money': 0, 'vp': 0}
         i = 0
         while (i < len(self.deck.hand) and (stats['actions'] > 0)):
-            print("i is " + str(i))
+            # print("i is " + str(i))
             card = self.deck.hand[i]
-            dp("this card is worth " + str(card.money))
-            if card.name in Deck.action_types:
+            # dp("this card is worth " + str(card.money))
+            if card.name in Card.action_types:
                 stats['actions'] -= 1
                 # it's an action card
-                card.play(self.deck, stats) 
-            elif card.name in Deck.money_types:
+                stats = card.play(self.deck, stats) 
+            elif card.name in Card.money_types:
                 stats['money'] += card.money
             else:
                 stats['vp'] += card.vp
@@ -92,6 +150,42 @@ class Game:
     # buy does the buying, also taking a strategy function for the best card(s) to buy
     def buy(self, strat, *args):
         strat(args)
+
+#####################################################################################################
+#####################################################################################################
+
+# priority buy is a helper for buying
+# returns a function that takes a deck and a money value
+# adds a card to the deck based on the money
+# priority buy itself takes a list of cards available and sorts them by price and priority
+# ties broken by "priority" attribute 
+def priorityBuy(available):
+
+    dp("priorityBuy")
+
+    # 2d matrix - list of lists
+    options = []   
+    # costs are 0 to 8 inclusive - coppers to provinces
+    dp(available)
+    for _ in range(0, 9):
+        options.append([])
+    for card_name in available:
+        options[Card.costs[card_name]].append(card_name) 
+    dp(options) 
+    def selectBuy(money):
+        i = money
+        if i > 8: 
+            i = 8 # this works as long as there is one buy
+        name = '' # name of the returned card
+        while i > 0:
+            if options[i]:
+                return options[i][0] # this could be random later
+            else:
+                i -= 1
+        # name will be null if there's nothing worth buying
+        return name 
+    
+    return selectBuy
 
 
 # debug print - same as print iff debug is true
