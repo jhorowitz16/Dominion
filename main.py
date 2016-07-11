@@ -12,7 +12,7 @@ DEBUG = False
 def turnsUntilEvent():
       num_turns = []
       # find out the average number of turns it takes to get some event
-      for i in range(0, 2000):
+      for i in range(0, 200):
             game = Game()
             game.setup()
             money = 0
@@ -42,7 +42,7 @@ def turnsUntilEvent():
 def turnsUntilPoints(num_points, switches=(0,100)):
       num_turns = []
       # find out the average number of turns it takes to get some event
-      for i in range(0, 2000):
+      for i in range(0, 150):
             game = Game(switches)
             game.setup()
             vp = 0
@@ -58,7 +58,7 @@ def turnsUntilPoints(num_points, switches=(0,100)):
             num_turns.append(turn)
 
       dp(num_turns)
-      av_turns = sum(num_turns)/len(num_turns)
+      av_turns = (0.0 + sum(num_turns))/len(num_turns)
       dp("average: " + str(av_turns))
       return av_turns
 
@@ -66,12 +66,21 @@ def turnsUntilPoints(num_points, switches=(0,100)):
 def findOptimalSwitches():
     opt_e = 0 # early
     opt_l = 0 # late
-    for opt_e in range(1, 10):
-        print("--------------------")
-        for opt_l in range(5, 15):
-            result = turnsUntilPoints(27, (opt_e, opt_l)) 
-            print(">>> " + str(opt_e) + " " + str(opt_l) + "    " + str(result))
 
+    best_result = 100
+    best_e = -1
+    best_l = -1
+
+    for e in range(0, 10):
+        print("--------------------")
+        for l in range(5, 16):
+            result = turnsUntilPoints(27, (e, l)) 
+            print(">>> " + str(e) + " " + str(l) + "    " + str(result))
+            if best_result > result:
+                best_e, best_l = e, l
+                best_result = result
+
+    print("best: " + str(best_result) + " with " + str((best_e, best_l)))
 
 def playGame():
       game = Game()
