@@ -6,7 +6,7 @@ from game import Game
 # for generic testing 
 
 
-DEBUG = True 
+DEBUG = False 
 
 
 def turnsUntilEvent():
@@ -39,11 +39,11 @@ def turnsUntilEvent():
 # turnsUntilEvent()
 
 
-def turnsUntilPoints(num_points):
+def turnsUntilPoints(num_points, switches=(0,100)):
       num_turns = []
       # find out the average number of turns it takes to get some event
       for i in range(0, 2000):
-            game = Game()
+            game = Game(switches)
             game.setup()
             vp = 0
             vp_dist = [] # distribution of the victory points- to see the progression as the deck comp improves
@@ -58,7 +58,19 @@ def turnsUntilPoints(num_points):
             num_turns.append(turn)
 
       dp(num_turns)
-      dp("average: " + str(sum(num_turns)/len(num_turns)))
+      av_turns = sum(num_turns)/len(num_turns)
+      dp("average: " + str(av_turns))
+      return av_turns
+
+
+def findOptimalSwitches():
+    opt_e = 0 # early
+    opt_l = 0 # late
+    for opt_e in range(1, 10):
+        print("--------------------")
+        for opt_l in range(5, 15):
+            result = turnsUntilPoints(27, (opt_e, opt_l)) 
+            print(">>> " + str(opt_e) + " " + str(opt_l) + "    " + str(result))
 
 
 def playGame():
@@ -80,6 +92,6 @@ def dp(print_str):
         print(print_str)
 
 
-
-turnsUntilPoints(27)
+findOptimalSwitches()
+# nurnsUntilPoints(27)
 # playGame()
