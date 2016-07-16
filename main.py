@@ -9,6 +9,8 @@ from game import Game
 DEBUG = False 
 
 
+TRIALS = 500
+
 def turnsUntilEvent():
       num_turns = []
       # find out the average number of turns it takes to get some event
@@ -42,7 +44,7 @@ def turnsUntilEvent():
 def turnsUntilPoints(num_points, switches=(0,100)):
       num_turns = []
       # find out the average number of turns it takes to get some event
-      for i in range(0, 150):
+      for i in range(0, TRIALS):
             game = Game(switches)
             game.setup()
             vp = 0
@@ -72,14 +74,17 @@ def findOptimalSwitches():
     best_l = -1
 
     for e in range(0, 10):
-        print("--------------------")
+        output_file = open("new" + str(e) + ".txt", 'w')
+        rp("trials: " + str(TRIALS), output_file)
+        rp("--------------------", output_file)
         for l in range(5, 16):
             result = turnsUntilPoints(27, (e, l)) 
-            print(">>> " + str(e) + " " + str(l) + "    " + str(result))
+            rp(">>> " + str(e) + " " + str(l) + "    " + str(result), output_file)
             if best_result > result:
                 best_e, best_l = e, l
                 best_result = result
-
+        output_file.close()
+        print(e)
     print("best: " + str(best_result) + " with " + str((best_e, best_l)))
 
 def playGame():
@@ -95,6 +100,13 @@ def playGame():
             turn_results = game.takeTurn()
 
 
+# required print, for testing
+def rp(print_str, dest=None):
+    if dest:
+        dest.write(print_str + "\n")
+    else:
+        print(print_str)
+
 # debug print - same as print iff debug is true
 def dp(print_str):
     if DEBUG:
@@ -104,3 +116,5 @@ def dp(print_str):
 findOptimalSwitches()
 # nurnsUntilPoints(27)
 # playGame()
+
+print("DONE")
