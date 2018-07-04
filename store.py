@@ -13,8 +13,8 @@ class Store:
 
         # VPs
         base_vp_count = 12 if (num_players > 2) else 8
-        province_count = base_vp_count + \
-            (num_players - 4) * 10 if (num_players > 4) else 0
+        province_count = base_vp_count + (
+            (num_players - 4) * 3 if (num_players > 4) else 0)
 
         curse_count = 10 * (num_players - 1)
 
@@ -24,7 +24,7 @@ class Store:
             "GOLD": gold_count,
             "ESTATE": base_vp_count,
             "DUCHY": base_vp_count,
-            "PROVINCE" province_count,
+            "PROVINCE": province_count,
             "CURSE": curse_count
         }
         self.num_players = num_players
