@@ -4,8 +4,8 @@ from card import Card
 # Deck.py
 # deck class for dominion
 
-DEBUG = False
-# DEBUG = True
+# DEBUG = False
+DEBUG = True
 
 class Deck:
 
@@ -17,16 +17,16 @@ class Deck:
 
     def __init__(self, deck_id=0, player="player", name="deck"):
         dp("INIT")
-        self.deck_id = deck_id 
+        self.deck_id = deck_id
         self.player = player
         self.name = name
 
         self.hand = []
         self.discard = []
-        self.pile = [] 
+        self.pile = []
         dp("USING SETUP DECK")
         self.setupDeck() # 7 coppers, 3 estates
-                
+
         self.total_vp = self.calcTotalVPs()
         self.total_worth = self.calcTotalWorth()
         self.av_worth = self.total_worth / len(self.pile)
@@ -59,9 +59,9 @@ class Deck:
             pass
 
 
-    ###### helper methods for simple calculations ###### 
+    ###### helper methods for simple calculations ######
 
-    # calculate the total 'worth' of the deck based on the initial list of cards passed into the constructor 
+    # calculate the total 'worth' of the deck based on the initial list of cards passed into the constructor
     def calcTotalWorth(self):
         total = 0
         for card in self.pile:
@@ -74,7 +74,7 @@ class Deck:
         everything = self.pile + self.discard + self.hand
         for card in everything:
             total += card.worth
-        
+
         return total
 
     # not sure if this will be useful...
@@ -132,12 +132,12 @@ class Deck:
         if not self.pile:
             # no pile... problem... need to shuffle
             self.reshuffle()
-        left_to_deal = numCards 
+        left_to_deal = numCards
         while left_to_deal > 0:
             dp(self.pile)
             if len(self.pile) > 0:
                   self.hand.append(self.pile.pop())
-                  left_to_deal -= 1 
+                  left_to_deal -= 1
             else:
                   # need to reshuffle
                   self.reshuffle()

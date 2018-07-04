@@ -3,7 +3,7 @@ from deck import Deck
 
 # Simulate an actual game (for a single person)
 
-DEBUG = False 
+DEBUG = True
 ASSERTS = False
 
 class Game:
@@ -16,16 +16,16 @@ class Game:
         self.deck.fullPrint(self.turn)
 
 
-        self.earlyBuy = priorityBuy(Card.money_types + ['LABORATORY']) 
-        self.midBuy = priorityBuy(Card.money_types + ['LABORATORY'] + ['PROVINCE']) 
+        self.earlyBuy = priorityBuy(Card.money_types + ['LABORATORY'])
+        self.midBuy = priorityBuy(Card.money_types + ['LABORATORY'] + ['PROVINCE'])
         self.lateBuy = priorityBuy(Card.victory_types)
 
         self.switches = switches
 
-        # self.earlyBuy = priorityBuy(Card.money_types) 
-        # self.midBuy = priorityBuy(Card.money_types + ['PROVINCE']) 
+        # self.earlyBuy = priorityBuy(Card.money_types)
+        # self.midBuy = priorityBuy(Card.money_types + ['PROVINCE'])
         # self.lateBuy = self.midBuy
-        
+
 
         if ASSERTS:
             assert self.midBuy(1) == ''
@@ -33,7 +33,7 @@ class Game:
             assert self.earlyBuy(5) == 'LABORATORY'
             assert self.earlyBuy(6) == 'GOLD'
             assert self.earlyBuy(8) == 'GOLD'
-            
+
             assert self.midBuy(1) == ''
             assert self.midBuy(3) == 'SILVER'
             assert self.midBuy(5) == 'LABORATORY'
@@ -45,12 +45,12 @@ class Game:
             # assert self.lateBuy(5) == 'DUCHYzz' # test to fail
             assert self.lateBuy(6) == 'DUCHY'
             assert self.lateBuy(8) == 'PROVINCE'
-            
 
-    # note the constructor already initialized the deck, plus it is already shuffled 
+
+    # note the constructor already initialized the deck, plus it is already shuffled
     def setup(self):
         pass
-    
+
 
     # ABC
     # Action
@@ -72,9 +72,9 @@ class Game:
         self.phaseBuys(stats['money']) # before turn 8, early game, before turn 10, mid game
         self.deck.cleanUp()
 
-        return return_info 
+        return return_info
 
-    
+
     # smart buy - switches is a tuple signaling when to switch strategies
     # ex - (5, 10) - before turn 5 early game, before turn 10 mid game, then late game (all VPs)
     # goal - find the optimal constants
@@ -93,7 +93,7 @@ class Game:
         else:
             dp("late")
             newCard = self.lateBuy(money)
-        dp("New Card: " + newCard) # *** multiple buys later 
+        dp("New Card: " + newCard) # *** multiple buys later
         self.deck.addCardType(newCard)
 
 
@@ -132,13 +132,13 @@ class Game:
             if card.name in Card.action_types:
                 stats['actions'] -= 1
                 # it's an action card
-                stats = card.play(self.deck, stats) 
+                stats = card.play(self.deck, stats)
             elif card.name in Card.money_types:
                 stats['money'] += card.money
             else:
                 stats['vp'] += card.vp
             i += 1
-                # add a play action for each card later - 
+                # add a play action for each card later -
                 # *** - dictionary maps card names to the methods themselves...
         return stats
 
@@ -158,23 +158,23 @@ class Game:
 # returns a function that takes a deck and a money value
 # adds a card to the deck based on the money
 # priority buy itself takes a list of cards available and sorts them by price and priority
-# ties broken by "priority" attribute 
+# ties broken by "priority" attribute
 def priorityBuy(available):
 
     dp("priorityBuy")
 
     # 2d matrix - list of lists
-    options = []   
+    options = []
     # costs are 0 to 8 inclusive - coppers to provinces
     dp(available)
     for _ in range(0, 9):
         options.append([])
     for card_name in available:
-        options[Card.costs[card_name]].append(card_name) 
-    dp(options) 
+        options[Card.costs[card_name]].append(card_name)
+    dp(options)
     def selectBuy(money):
         i = money
-        if i > 8: 
+        if i > 8:
             i = 8 # this works as long as there is one buy
         name = '' # name of the returned card
         while i > 0:
@@ -183,8 +183,8 @@ def priorityBuy(available):
             else:
                 i -= 1
         # name will be null if there's nothing worth buying
-        return name 
-    
+        return name
+
     return selectBuy
 
 
