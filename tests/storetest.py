@@ -61,5 +61,18 @@ class TestStoreMethods(unittest.TestCase):
         self.assertEqual(inven["DUCHY"], 12)
         self.assertEqual(inven["PROVINCE"], 18)
 
+    def test_buy(self):
+        store = Store(2)
+        count = 8
+        while count > 0:
+            buy_res = store.buy("PROVINCE")
+            count -= 1
+            self.assertEqual(store.base_inventory["PROVINCE"], count)
+            self.assertEqual(buy_res, "PROVINCE")
+        self.assertEqual(store.buy("PROVINCE"), None)
+        self.assertEqual(store.buy("PROVINCE"), None)
+        self.assertEqual(store.base_inventory["PROVINCE"], 0)
+
+
 if __name__ == '__main__':
     unittest.main()

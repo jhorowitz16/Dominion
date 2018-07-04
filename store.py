@@ -30,7 +30,7 @@ class Store:
         self.num_players = num_players
 
 
-    def buy(card_name):
+    def buy(self, card_name):
         """
         returns boolean the card name when bought, or None when illegal buy
         on legal buy, decrement the relevant count
