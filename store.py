@@ -1,4 +1,6 @@
 
+DEBUG = True
+
 class Store:
     def __init__(self, num_players=2):
         """
@@ -39,6 +41,7 @@ class Store:
         if card_name in inven and inven[card_name] > 0:
             # decrement the card
             inven[card_name] -= 1
+            dp("Remaining " + card_name + ": " + str(inven[card_name]))
             return card_name
         else:
             print("ERROR: cannot buy " + card_name)
@@ -51,3 +54,8 @@ class Store:
             s += k + ": " + str(self.base_inventory[k])
         s = "======\n"
         return s
+
+# debug print - same as print iff debug is true
+def dp(print_str):
+    if DEBUG:
+        print(print_str)

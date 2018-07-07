@@ -16,7 +16,6 @@ def turnsUntilEvent():
       # find out the average number of turns it takes to get some event
       for i in range(0, 200):
             game = Game()
-            game.setup()
             money = 0
             money_dist = [] # distribution of the money - to see the progression as the deck comp improves
 
@@ -46,7 +45,6 @@ def turnsUntilPoints(num_points, switches=(0,100)):
       # find out the average number of turns it takes to get some event
       for i in range(0, TRIALS):
             game = Game(switches)
-            game.setup()
             vp = 0
             vp_dist = [] # distribution of the victory points- to see the progression as the deck comp improves
 
@@ -89,7 +87,6 @@ def findOptimalSwitches():
 
 def playGame():
       game = Game()
-      game.setup()
       game_over = False
       while (not game_over):
             input_string = raw_input("\npress c to continue, q to quit: ")

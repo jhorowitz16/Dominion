@@ -74,7 +74,6 @@ class Deck:
         everything = self.pile + self.discard + self.hand
         for card in everything:
             total += card.worth
-
         return total
 
     # not sure if this will be useful...
@@ -103,7 +102,6 @@ class Deck:
             shuffle(self.discard)
         self.pile += self.discard
         self.discard = []
-
 
 
     ###### game actions ######
@@ -150,8 +148,6 @@ class Deck:
     def handToDiscard(self):
         discard += hand
         hand = []
-
-
 
     ###### string related utils ######
 

@@ -1,5 +1,6 @@
 from card import Card
 from deck import Deck
+from store import Store
 
 # Simulate an actual game (for a single person)
 
@@ -21,6 +22,8 @@ class Game:
         self.lateBuy = priorityBuy(Card.victory_types)
 
         self.switches = switches
+
+        self.store = Store()
 
         # self.earlyBuy = priorityBuy(Card.money_types)
         # self.midBuy = priorityBuy(Card.money_types + ['PROVINCE'])
@@ -46,10 +49,19 @@ class Game:
             assert self.lateBuy(6) == 'DUCHY'
             assert self.lateBuy(8) == 'PROVINCE'
 
+    def buyCardType(self, newCard):
+        """
+        same as the old self.deck.addCardType(newCard)
+        but ... also remove the corresponding card from the Store
 
-    # note the constructor already initialized the deck, plus it is already shuffled
-    def setup(self):
-        pass
+        if the store buy fails,
+            then will return None, otherwise the card
+        """
+
+        if not self.store.buy(newCard):
+            return None
+        return self.deck.addCardType(newCard)
+
 
 
     # ABC
@@ -94,7 +106,7 @@ class Game:
             dp("late")
             newCard = self.lateBuy(money)
         dp("New Card: " + newCard) # *** multiple buys later
-        self.deck.addCardType(newCard)
+        self.buyCardType(newCard)
 
 
 
