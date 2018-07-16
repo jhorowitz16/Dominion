@@ -86,6 +86,19 @@ class Game:
 
         return return_info
 
+    def takeTurnProv(self):
+        """
+        take money, and provinces
+        """
+        money =  self.deck.calcHandMoney()
+
+        result = self.moneyBuyWithStore(money, True)
+        if result != "GAMEOVER":
+            dp("take turn prov END GAME")
+        return result
+
+
+
 
     # smart buy - switches is a tuple signaling when to switch strategies
     # ex - (5, 10) - before turn 5 early game, before turn 10 mid game, then late game (all VPs)
@@ -127,6 +140,29 @@ class Game:
         else:
             dp("gold")
             self.deck.addCardType('GOLD')
+
+
+    def moneyBuyWithStore(self, money, provinces=False):
+        """
+        same as the original moneyBuy, but use the store instead
+        of adding the cards directly to the deck
+        """
+        dp("money: " + str(money))
+        if money >= 8 and provinces:
+            dp("province")
+            card_type = 'PROVINCE'
+        elif money < 3:
+            dp("no money, no buy")
+            card_type = 'no buy'
+        elif money < 6:
+            dp("silver")
+            card_type = 'SILVER'
+        else:
+            dp("gold")
+            card_type = 'GOLD'
+
+        return self.buyCardType(card_type)
+
 
 
     # Calculate and play the entire hand

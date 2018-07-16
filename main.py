@@ -6,7 +6,7 @@ from game import Game
 # for generic testing
 
 
-DEBUG = False
+DEBUG = True 
 
 
 TRIALS = 500
@@ -96,6 +96,15 @@ def playGame():
                 break
             turn_results = game.takeTurn()
 
+def playUntilProvinces():
+    """
+    play a two player game until the province pile runs out
+    """
+    game = Game()
+    while (not game.store.game_over):
+        turn_results = game.takeTurnProv()
+        print(turn_results)
+
 
 # required print, for testing
 def rp(print_str, dest=None):
@@ -112,6 +121,7 @@ def dp(print_str):
 
 # findOptimalSwitches()
 # nurnsUntilPoints(27)
-playGame()
+# playGame()
+playUntilProvinces()
 
 print("DONE")

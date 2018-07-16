@@ -31,6 +31,8 @@ class Store:
         }
         self.num_players = num_players
 
+        self.game_over = False
+
 
     def buy(self, card_name):
         """
@@ -38,14 +40,22 @@ class Store:
         on legal buy, decrement the relevant count
         """
         inven = self.base_inventory
-        if card_name in inven and inven[card_name] > 0:
+        if self.game_over:
+            print("GAMEOVER")
+            return "GAMEOVER"
+        elif card_name in inven and inven[card_name] > 0:
             # decrement the card
             inven[card_name] -= 1
             dp("Remaining " + card_name + ": " + str(inven[card_name]))
+            self.update_game_over()
             return card_name
         else:
             print("ERROR: cannot buy " + card_name)
             return None
+
+    def update_game_over(self):
+        if self.base_inventory["PROVINCE"] <= 0:
+            self.game_over = True
 
     def __str__(self):
         s = "======\n"
